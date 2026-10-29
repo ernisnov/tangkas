@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TANGKAS - Tangga Gapai Kejujuran</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fredoka for playful headers -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti for victory celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #312e81 50%, #4c1d95 100%);
+            min-height: 100vh;
+            color: #1f2937;
+        }
+        .font-display {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+        /* Enhanced Realistic 3D Dice Styling & Animations */
+        .dice-container {
+            perspective: 800px;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dice {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.15, 0.85, 0.35, 1.2);
+            cursor: pointer;
+        }
+        .dice.rolling {
+            animation: rollDice3D 0.7s infinite cubic-bezier(0.3, 0.1, 0.4, 1);
+        }
+        @keyframes rollDice3D {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateZ(0px); }
+            20% { transform: rotateX(240deg) rotateY(180deg) rotateZ(90deg) translateZ(20px); }
+            40% { transform: rotateX(480deg) rotateY(360deg) rotateZ(180deg) translateZ(30px); }
+            60% { transform: rotateX(720deg) rotateY(540deg) rotateZ(270deg) translateZ(20px); }
+            80% { transform: rotateX(960deg) rotateY(720deg) rotateZ(360deg) translateZ(10px); }
+            100% { transform: rotateX(1080deg) rotateY(900deg) rotateZ(450deg) translateZ(0px); }
+        }
+        .dice-face {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            border: 3px solid #cbd5e1;
+            border-radius: 16px;
+            display: grid;
+            grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+            padding: 10px;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.08), 0 8px 16px rgba(0,0,0,0.2);
+            backface-visibility: hidden;
+        }
+        .face-1 { transform: rotateY(0deg) translateZ(40px); }
+        .face-2 { transform: rotateX(-90deg) translateZ(40px); }
+        .face-3 { transform: rotateY(90deg) translateZ(40px); }
+        .face-4 { transform: rotateY(-90deg) translateZ(40px); }
+        .face-5 { transform: rotateX(90deg) translateZ(40px); }
+        .face-6 { transform: rotateY(180deg) translateZ(40px); }
+
+        .dot {
+            background-color: #1e293b;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            align-self: center;
+            justify-self: center;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.3);
+        }
+        .face-1 .dot { grid-area: 2 / 2 / 3 / 3; width: 16px; height: 16px; background-color: #ef4444; }
+        .face-2 .dot:nth-child(1) { grid-area: 1 / 1 / 2 / 2; }
+        .face-2 .dot:nth-child(2) { grid-area: 3 / 3 / 4 / 4; }
+        .face-3 .dot:nth-child(1) { grid-area: 1 / 1 / 2 / 2; }
+        .face-3 .dot:nth-child(2) { grid-area: 2 / 2 / 3 / 3; }
+        .face-3 .dot:nth-child(3) { grid-area: 3 / 3 / 4 / 4; }
+        .face-4 .dot:nth-child(1) { grid-area: 1 / 1 / 2 / 2; }
+        .face-4 .dot:nth-child(2) { grid-area: 1 / 3 / 2 / 4; }
+        .face-4 .dot:nth-child(3) { grid-area: 3 / 1 / 4 / 2; }
+        .face-4 .dot:nth-child(4) { grid-area: 3 / 3 / 4 / 4; }
+        .face-5 .dot:nth-child(1) { grid-area: 1 / 1 / 2 / 2; }
+        .face-5 .dot:nth-child(2) { grid-area: 1 / 3 / 2 / 4; }
+        .face-5 .dot:nth-child(3) { grid-area: 2 / 2 / 3 / 3; }
+        .face-5 .dot:nth-child(4) { grid-area: 3 / 1 / 4 / 2; }
+        .face-5 .dot:nth-child(5) { grid-area: 3 / 3 / 4 / 4; }
+        .face-6 .dot:nth-child(1) { grid-area: 1 / 1 / 2 / 2; }
+        .face-6 .dot:nth-child(2) { grid-area: 1 / 3 / 2 / 4; }
+        .face-6 .dot:nth-child(3) { grid-area: 2 / 1 / 3 / 2; }
+        .face-6 .dot:nth-child(4) { grid-area: 2 / 3 / 3 / 4; }
+        .face-6 .dot:nth-child(5) { grid-area: 3 / 1 / 4 / 2; }
+        .face-6 .dot:nth-child(6) { grid-area: 3 / 3 / 4 / 4; }
+
+        .pawn-token {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col overflow-x-hidden selection:bg-amber-400 selection:text-amber-950">
+
+    <div id="app" class="flex-1 flex flex-col w-full max-w-[1920px] mx-auto min-h-screen relative">
+        
+        <!-- HEADER -->
+        <header class="bg-white/95 backdrop-blur-md shadow-md py-3 px-6 flex items-center justify-between z-30 sticky top-0 border-b border-indigo-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center shadow-md text-white font-display text-xl font-bold">
+                    T
+                </div>
+                <div>
+                    <h1 class="font-display text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">TANGKAS</h1>
+                    <p class="text-xs text-slate-500 font-medium hidden sm:block">Tangga Gapai Kejujuran, Korupsi Akan Sirna</p>
+                </div>
+            </div>
+            
+            <div id="header-game-controls" class="hidden items-center gap-3">
+                <button onclick="confirmRestartGame()" class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl font-medium text-sm transition-all flex items-center gap-2 border border-rose-200 shadow-sm">
+                    <i class="fa-solid fa-rotate-right"></i> <span class="hidden md:inline">Ulangi Permainan</span>
+                </button>
+                <button onclick="confirmBackToMenu()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-sm transition-all flex items-center gap-2 border border-slate-200 shadow-sm">
+                    <i class="fa-solid fa-house"></i> <span class="hidden md:inline">Keluar ke Menu</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 flex flex-col relative">
+            
+            <!-- VIEW 1: HOME SCREEN -->
+            <section id="view-home" class="flex-1 flex flex-col items-center justify-center p-4 md:p-8 max-w-5xl mx-auto w-full animate-fadeIn relative">
+
+                <!-- Developer credit positioned at the top right of the home screen -->
+                <div class="absolute top-2 right-4 flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full border border-indigo-100 shadow-sm text-xs text-slate-700 font-medium z-10">
+                    <span>Pengembang:</span>
+                    <span class="font-bold text-slate-900">Ernis Novitasari, S.Pd</span>
+                </div>
+
+                <div class="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 md:p-10 border border-white/50 w-full flex flex-col items-center relative overflow-hidden mt-6">
+                    
+                    <div class="absolute -top-16 -left-16 w-48 h-48 bg-amber-400/20 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-16 -right-16 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 text-amber-800 text-xs md:text-sm font-semibold mb-4 border border-amber-200">
+                        <i class="fa-solid fa-shield-halved text-amber-600"></i> Pendidikan Anti Korupsi & 9 Nilai Integritas
+                    </div>
+
+                    <h2 class="font-display text-4xl md:text-6xl font-extrabold text-slate-900 text-center mb-2 tracking-wide">
+                        TANGKAS
+                    </h2>
+                    <p class="text-base md:text-xl font-medium text-indigo-900 text-center mb-8 max-w-xl">
+                        Tangga Gapai Kejujuran, Korupsi Akan Sirna
+                    </p>
+
+                    <div class="w-full max-w-xl bg-slate-50 rounded-2xl p-6 border border-slate-200/80 mb-6 shadow-inner">
+                        <label class="block font-display text-base font-semibold text-slate-800 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-indigo-600"></i> Pilih Jumlah Pemain (2 - 5 Pemain)
+                        </label>
+                        <div class="grid grid-cols-4 gap-3">
+                            <button type="button" onclick="setPlayerCount(2)" class="player-count-btn py-3 rounded-xl font-display font-bold text-lg border-2 transition-all shadow-sm bg-indigo-600 text-white border-indigo-600" data-count="2">2</button>
+                            <button type="button" onclick="setPlayerCount(3)" class="player-count-btn py-3 rounded-xl font-display font-bold text-lg border-2 transition-all shadow-sm bg-white text-slate-700 border-slate-200 hover:border-indigo-300" data-count="3">3</button>
+                            <button type="button" onclick="setPlayerCount(4)" class="player-count-btn py-3 rounded-xl font-display font-bold text-lg border-2 transition-all shadow-sm bg-white text-slate-700 border-slate-200 hover:border-indigo-300" data-count="4">4</button>
+                            <button type="button" onclick="setPlayerCount(5)" class="player-count-btn py-3 rounded-xl font-display font-bold text-lg border-2 transition-all shadow-sm bg-white text-slate-700 border-slate-200 hover:border-indigo-300" data-count="5">5</button>
+                        </div>
+                    </div>
+
+                    <div class="w-full max-w-xl bg-slate-50 rounded-2xl p-6 border border-slate-200/80 mb-8 shadow-inner">
+                        <label class="block font-display text-base font-semibold text-slate-800 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-id-card text-indigo-600"></i> Nama & Warna Pion Pemain
+                        </label>
+                        <div id="player-inputs-container" class="space-y-3"></div>
+                    </div>
+
+                    <button onclick="startGame()" class="w-full max-w-xl py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-display text-xl font-bold rounded-2xl shadow-xl hover:shadow-teal-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-play text-lg"></i> MULAI BERMAIN
+                    </button>
+
+                </div>
+            </section>
+
+            <!-- VIEW 2: GAME BOARD SCREEN -->
+            <section id="view-game" class="hidden flex-1 flex flex-col lg:flex-row p-2 md:p-4 gap-3 max-w-[1920px] mx-auto w-full items-center justify-center h-[calc(100vh-65px)] overflow-hidden">
+                
+                <!-- LEFT PANEL: PLAYER HISTORY & LOGS -->
+                <div class="w-full lg:w-64 flex flex-col gap-2.5 flex-shrink-0">
+                    <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-md p-2.5 border border-indigo-100 flex flex-col h-[calc(100vh-90px)]">
+                        <h3 class="font-display font-bold text-slate-800 text-xs mb-2 flex items-center gap-1.5 flex-shrink-0">
+                            <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> Riwayat Permainan
+                        </h3>
+                        <div id="game-history-list" class="space-y-2 overflow-y-auto pr-1 flex-1 text-xs">
+                            <div class="text-slate-400 text-center py-4 italic text-[11px]">Permainan baru dimulai. Riwayat langkah akan muncul di sini.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 flex flex-col items-center justify-center w-full max-w-[calc(100vh-90px)] aspect-square mx-auto h-full">
+                    
+                    <div id="turn-banner" class="w-full bg-white/95 backdrop-blur-md rounded-xl shadow-sm px-3 py-1.5 mb-2 border border-indigo-100 flex items-center justify-between flex-shrink-0">
+                        <div class="flex items-center gap-2">
+                            <div id="current-player-avatar" class="w-7 h-7 rounded-lg flex items-center justify-center text-white font-display text-xs font-bold shadow-sm">P1</div>
+                            <div>
+                                <span class="text-[9px] text-slate-500 font-medium block leading-none">Giliran Saat Ini</span>
+                                <h3 id="current-player-name-banner" class="font-display font-bold text-xs md:text-sm text-slate-800 leading-tight">Pemain 1</h3>
+                            </div>
+                        </div>
+                        <div id="status-message" class="text-[11px] font-medium text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-200 hidden sm:block">
+                            Lempar dadu untuk memulai langkahmu!
+                        </div>
+                    </div>
+
+                    <div class="relative w-full aspect-square bg-slate-900 rounded-2xl shadow-xl p-1.5 md:p-2 border-2 border-indigo-900 overflow-hidden select-none flex-1 max-h-[calc(100vh-125px)]" id="board-wrapper">
+                        
+                        <svg class="absolute inset-1.5 md:inset-2 w-[calc(100%-0.75rem)] h-[calc(100%-0.75rem)] md:w-[calc(100%-1rem)] md:h-[calc(100%-1rem)] pointer-events-none z-10" id="board-svg" viewBox="0 0 1000 1000">
+                            <defs>
+                                <linearGradient id="woodGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#a0522d" />
+                                    <stop offset="50%" stop-color="#8b4513" />
+                                    <stop offset="100%" stop-color="#5c2c16" />
+                                </linearGradient>
+                                <linearGradient id="woodRung" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#cd853f" />
+                                    <stop offset="100%" stop-color="#8b4513" />
+                                </linearGradient>
+                                <linearGradient id="snakeGreenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#4ade80" />
+                                    <stop offset="50%" stop-color="#22c55e" />
+                                    <stop offset="100%" stop-color="#15803d" />
+                                </linearGradient>
+                                <linearGradient id="snakeRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#f87171" />
+                                    <stop offset="50%" stop-color="#ef4444" />
+                                    <stop offset="100%" stop-color="#991b1b" />
+                                </linearGradient>
+                            </defs>
+                            <g id="svg-ladders"></g>
+                            <g id="svg-snakes"></g>
+                        </svg>
+
+                        <div id="board-grid" class="grid grid-cols-10 grid-rows-10 w-full h-full gap-1 relative z-0"></div>
+
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-64 flex flex-col gap-2.5 flex-shrink-0">
+                    
+                    <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-md p-3 border border-indigo-100 flex flex-col items-center">
+                        <h3 class="font-display font-bold text-slate-800 text-xs mb-1.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-dice text-indigo-600"></i> Lempar Dadu 3D
+                        </h3>
+                        
+                        <div class="dice-container mb-1.5 relative flex items-center justify-center scale-65 origin-center h-20">
+                            <div class="absolute bottom-0 w-16 h-2.5 bg-slate-900/20 rounded-full blur-sm"></div>
+                            <div id="dice" class="dice" onclick="rollDice()">
+                                <div class="dice-face face-1"><div class="dot"></div></div>
+                                <div class="dice-face face-2"><div class="dot"></div><div class="dot"></div></div>
+                                <div class="dice-face face-3"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                                <div class="dice-face face-4"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                                <div class="dice-face face-5"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                                <div class="dice-face face-6"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                            </div>
+                        </div>
+
+                        <div class="w-full bg-indigo-50 border border-indigo-200 rounded-xl p-1.5 flex items-center justify-center gap-2 mb-2.5 shadow-inner">
+                            <div class="w-5 h-5 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-display font-bold text-[10px] shadow-sm">
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <div class="text-center">
+                                <span class="text-[9px] text-indigo-700 font-semibold uppercase tracking-wide block leading-none">Hasil Lemparan</span>
+                                <span id="dice-val-display" class="font-display font-extrabold text-indigo-900 text-xs leading-tight">Belum dilempar</span>
+                            </div>
+                        </div>
+
+                        <button id="roll-btn" onclick="rollDice()" class="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-display text-xs font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-dice"></i> LEMPAR DADU
+                        </button>
+                    </div>
+
+                    <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-md p-2.5 border border-indigo-100 flex flex-col">
+                        <h3 class="font-display font-bold text-slate-800 text-xs mb-1.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-ranking-star text-indigo-600"></i> Status Pemain
+                        </h3>
+                        <div id="players-status-list" class="space-y-1.5 max-h-[150px] overflow-y-auto pr-1"></div>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL: NARRATIVE -->
+    <div id="modal-narrative" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 animate-fadeIn">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 md:p-8 border border-indigo-100 text-center relative overflow-hidden">
+            <div id="narrative-badge-icon" class="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-white text-2xl font-bold shadow-lg mb-4">
+                <i id="narrative-icon-i" class="fa-solid fa-stairs"></i>
+            </div>
+            <span id="narrative-category" class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">Kategori</span>
+            <h3 id="narrative-title" class="font-display text-xl md:text-2xl font-bold text-slate-900 mb-3">Judul Situasi</h3>
+            
+            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-4 text-left">
+                <p id="narrative-story" class="text-slate-800 font-medium text-sm md:text-base leading-relaxed mb-3">Narasi situasi...</p>
+                <p id="narrative-moral" class="text-xs md:text-sm font-bold text-indigo-700 italic">Pesan moral...</p>
+            </div>
+
+            <button onclick="closeNarrativeModal()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-display font-bold rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-check"></i> SAYA SUDAH MEMBACA
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: STAR TILE / CHALLENGE QUIZ -->
+    <div id="modal-quiz" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 animate-fadeIn">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-5 md:p-6 border border-indigo-100 transform transition-all scale-100 relative overflow-hidden max-h-[90vh] flex flex-col">
+            
+            <div class="flex items-center justify-between mb-3 flex-shrink-0">
+                <span id="quiz-category-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">Kategori: BERANI</span>
+                <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-600 font-display font-bold text-sm border border-rose-200">
+                    <i class="fa-regular fa-clock"></i> <span id="quiz-timer">30</span>d
+                </div>
+            </div>
+
+            <h3 class="font-display text-lg md:text-xl font-bold text-slate-900 mb-2 flex items-center gap-2 flex-shrink-0">
+                <i class="fa-solid fa-star text-amber-500"></i> Kartu Tantangan Integritas
+            </h3>
+            
+            <div class="overflow-y-auto flex-1 pr-1 space-y-3">
+                <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200">
+                    <p id="quiz-question" class="text-slate-800 font-medium text-xs md:text-sm leading-relaxed">Pertanyaan dilema moral...</p>
+                </div>
+
+                <div id="quiz-options-container" class="space-y-2"></div>
+
+                <div id="quiz-feedback-box" class="hidden rounded-2xl p-3.5 border">
+                    <h4 id="quiz-feedback-title" class="font-display font-bold text-xs md:text-sm mb-1">Umpan Balik</h4>
+                    <p id="quiz-feedback-text" class="text-xs md:text-sm leading-relaxed"></p>
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-4 pt-3 border-t border-slate-100 flex-shrink-0">
+                <button id="quiz-submit-btn" onclick="submitQuizAnswer()" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-display font-bold rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-paper-plane"></i> KIRIM JAWABAN
+                </button>
+                <button id="quiz-close-btn" onclick="closeQuizModal()" class="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-display font-bold rounded-2xl shadow-sm transition-all hidden items-center justify-center gap-2 border border-slate-300 text-sm">
+                    <i class="fa-solid fa-xmark"></i> TUTUP
+                </button>
+                <button id="quiz-next-btn" onclick="closeQuizModal()" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-display font-bold rounded-2xl shadow-lg transition-all hidden items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-arrow-right"></i> LANJUTKAN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: VICTORY SCREEN -->
+    <div id="modal-victory" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 animate-fadeIn">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 md:p-10 border border-indigo-100 text-center relative overflow-hidden">
+            <div class="w-20 h-20 bg-amber-400 text-amber-950 rounded-3xl mx-auto flex items-center justify-center text-4xl shadow-xl mb-6 transform rotate-6">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h2 class="font-display text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">SELAMAT!</h2>
+            <h3 id="winner-name-display" class="font-display text-xl md:text-2xl font-bold text-indigo-600 mb-4">Pemain 1 Menang!</h3>
+            
+            <div class="bg-indigo-50/80 rounded-2xl p-5 border border-indigo-100 mb-6 text-slate-700 text-xs md:text-sm leading-relaxed text-left">
+                <p class="font-medium">
+                    “Selamat! Kamu telah menyelesaikan petualangan TANGKAS. Ingat, kejujuran bukan hanya untuk memenangkan permainan, tetapi juga untuk membangun masa depan yang lebih baik. Jadilah generasi yang berintegritas, berani, adil, dan bertanggung jawab!”
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="restartGameSamePlayers()" class="flex-1 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-display font-bold rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> MAIN LAGI
+                </button>
+                <button onclick="confirmBackToMenu()" class="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-display font-bold rounded-2xl shadow-sm transition-all flex items-center justify-center gap-2 border border-slate-200">
+                    <i class="fa-solid fa-house"></i> KEMBALI KE MENU
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN GAME LOGIC & SCRIPT -->
+    <script>
+        const PLAYER_COLORS = [
+            { name: 'Biru Muda', class: 'bg-cyan-500 text-white', border: 'border-cyan-600', hex: '#06b6d4' },
+            { name: 'Navy', class: 'bg-indigo-900 text-white', border: 'border-indigo-950', hex: '#312e81' },
+            { name: 'Pink', class: 'bg-pink-500 text-white', border: 'border-pink-600', hex: '#ec4899' },
+            { name: 'Jingga', class: 'bg-orange-500 text-white', border: 'border-orange-600', hex: '#f97316' },
+            { name: 'Ungu', class: 'bg-purple-600 text-white', border: 'border-purple-700', hex: '#9333ea' }
+        ];
+
+        // Ladders configuration (Start -> End) for 10x10 (100 tiles)
+        const LADDERS = {
+            4: {
+                target: 14,
+                title: "Menyerahkan Temuan ke Guru Piket",
+                category: "Jujur & Amanah",
+                story: "Kamu menemukan uang Rp10.000 tergeletak di koridor sekolah dan langsung menyerahkannya ke guru piket.",
+                moral: "Kejujuran membawa kamu melangkah lebih tinggi!"
+            },
+            9: {
+                target: 31,
+                title: "Menegur Teman yang Menyontek",
+                category: "Berani & Peduli",
+                story: "Kamu melihat teman dekatmu berniat menyontek saat ujian, lalu kamu menegurnya dengan tegas dan mengingatkannya untuk belajar.",
+                moral: "Menegur kesalahan teman adalah bukti sahabat yang sejati."
+            },
+            28: {
+                target: 84,
+                title: "Transparansi Keuangan Kelas",
+                category: "Transparansi & Tanggung Jawab",
+                story: "Sebagai bendahara kelas, kamu mencatat semua pengeluaran uang kas dengan detail, transparan, dan menunjukkannya di mading kelas.",
+                moral: "Akuntabilitas membangun kepercayaan."
+            }
+        };
+
+        // Snakes configuration (Head -> Tail) for 10x10 (100 tiles)
+        const SNAKES = {
+            17: {
+                target: 7,
+                title: "Terlambat & Alasan Palsu",
+                category: "Kejujuran & Disiplin",
+                story: "Kamu sengaja datang terlambat ke sekolah dan memberikan alasan palsu kepada guru piket agar tidak dihukum.",
+                moral: "Ketidakjujuran dan ketidakdisiplinan dapat merusak kepercayaan."
+            },
+            54: {
+                target: 34,
+                title: "Menggunakan Uang Kas untuk Pribadi",
+                category: "Tanggung Jawab & Amanah",
+                story: "Kamu menggunakan uang kas kelas yang kamu pegang untuk membeli jajan pribadi, dengan niat akan menggantinya nanti.",
+                moral: "Menggunakan uang bersama untuk kepentingan pribadi tanpa izin adalah tindakan yang salah."
+            },
+            89: {
+                target: 53,
+                title: "Suap & Penghapusan Catatan PR",
+                category: "Adil, Jujur & Antisuap",
+                story: "Kamu ikut-ikutan memberikan hadiah kepada ketua kelas agar namamu dihapus dari daftar siswa yang tidak mengerjakan PR.",
+                moral: "Suap dan perlakuan istimewa merusak keadilan serta kepercayaan."
+            }
+        };
+
+        const STAR_TILES = [8, 15, 22, 38, 47, 58, 71, 82, 95];
+
+        const QUESTION_BANK = [
+            {
+                id: 1,
+                category: "BERANI",
+                question: "Kamu melihat ketua OSIS menggunakan sisa anggaran lomba untuk membeli sepatu baru untuk dirinya sendiri. Apa yang akan kamu lakukan?",
+                options: [
+                    "A. Membiarkannya karena dia adalah ketua OSIS.",
+                    "B. Meminta bagian dari uang tersebut.",
+                    "C. Melaporkannya kepada pembina OSIS atau guru secara sopan agar diperiksa secara transparan.",
+                    "D. Menyebarkan tuduhan tersebut di media sosial tanpa memeriksa fakta."
+                ],
+                correct: 2,
+                feedback: "Berani menyampaikan dugaan penyalahgunaan dana melalui pihak yang tepat membantu menjaga transparansi dan keadilan."
+            },
+            {
+                id: 2,
+                category: "ADIL",
+                question: "Kamu adalah kapten tim futsal sekolah. Anak seorang guru ingin masuk tim inti, padahal kemampuan bermainnya masih di bawah beberapa siswa lain. Apa keputusanmu?",
+                options: [
+                    "A. Memilihnya karena orang tuanya adalah guru.",
+                    "B. Memilih pemain berdasarkan kemampuan dan hasil seleksi yang adil.",
+                    "C. Menolak semua siswa yang memiliki orang tua guru.",
+                    "D. Memilih pemain yang memberikan hadiah kepadamu."
+                ],
+                correct: 1,
+                feedback: "Keputusan yang adil didasarkan pada kemampuan dan kriteria yang sama, bukan hubungan pribadi atau jabatan orang tua."
+            },
+            {
+                id: 3,
+                category: "JUJUR",
+                question: "Kamu tidak sengaja merusakkan alat praktikum sekolah. Tidak ada teman yang melihat kejadian itu. Apa yang sebaiknya kamu lakukan?",
+                options: [
+                    "A. Menyembunyikan alat tersebut.",
+                    "B. Menyalahkan teman lain.",
+                    "C. Mengakui kejadian kepada guru dan bersedia bertanggung jawab.",
+                    "D. Meninggalkan laboratorium tanpa memberi tahu siapa pun."
+                ],
+                correct: 2,
+                feedback: "Kejujuran menuntut keberanian mengakui kesalahan dan bertanggung jawab atas tindakan yang dilakukan."
+            },
+            {
+                id: 4,
+                category: "DISIPLIN",
+                question: "Kamu menjadi petugas piket kelas, tetapi teman-temanmu mengajak bermain ketika kelas belum dibersihkan. Apa yang kamu lakukan?",
+                options: [
+                    "A. Ikut bermain dan membiarkan kelas kotor.",
+                    "B. Menyelesaikan tugas piket sesuai kesepakatan sebelum bermain.",
+                    "C. Meminta teman lain mengerjakan semua tugasmu.",
+                    "D. Berpura-pura sudah membersihkan kelas."
+                ],
+                correct: 1,
+                feedback: "Kedisiplinan berarti mendahulukan kewajiban dan tanggung jawab sebelum menikmati waktu senggang."
+            },
+            {
+                id: 5,
+                category: "TANGGUNG JAWAB",
+                question: "Kamu menjadi bendahara kelas dan menemukan bahwa catatan uang kas tidak sesuai dengan jumlah uang yang tersedia. Apa tindakanmu?",
+                options: [
+                    "A. Mengubah catatan agar terlihat sesuai.",
+                    "B. Menyembunyikan masalah tersebut.",
+                    "C. Memeriksa catatan dan bukti transaksi, lalu menjelaskan perbedaan itu kepada wali kelas.",
+                    "D. Menuduh teman tanpa bukti."
+                ],
+                correct: 2,
+                feedback: "Tanggung jawab keuangan ditunjukkan dengan transparansi, pemeriksaan cermat, dan pelaporan yang jujur."
+            }
+        ];
+
+        let gameState = {
+            playerCount: 2,
+            players: [],
+            activePlayerIndex: 0,
+            isRolling: false,
+            isMoving: false,
+            lastDiceValue: 1,
+            quizTimerInterval: null,
+            quizSecondsLeft: 30,
+            currentQuizQuestion: null,
+            pendingAction: null,
+            historyLogs: []
+        };
+
+        window.setPlayerCount = function(count) {
+            gameState.playerCount = count;
+            document.querySelectorAll('.player-count-btn').forEach(btn => {
+                const c = parseInt(btn.getAttribute('data-count'));
+                if (c === count) {
+                    btn.className = "player-count-btn py-3 rounded-xl font-display font-bold text-lg border-2 transition-all shadow-sm bg-indigo-600 text-white border-indigo-600";
+                } else {
+                    btn.className = "player-count-btn py-3 rounded-xl font-display font-bold text-lg border-2 transition-all shadow-sm bg-white text-slate-700 border-slate-200 hover:border-indigo-300";
+                }
+            });
+            renderPlayerInputs();
+        };
+
+        function renderPlayerInputs() {
+            const container = document.getElementById('player-inputs-container');
+            container.innerHTML = '';
+            for (let i = 0; i < gameState.playerCount; i++) {
+                const defName = `Pemain ${i + 1}`;
+                const colorObj = PLAYER_COLORS[i];
+                const div = document.createElement('div');
+                div.className = "flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm";
+                div.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg ${colorObj.class} flex items-center justify-center font-display font-bold text-sm shadow-sm flex-shrink-0">
+                        P${i+1}
+                    </div>
+                    <input type="text" id="player-name-${i}" value="${defName}" placeholder="Nama Pemain ${i+1}" maxlength="15"
+                        class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all">
+                    <span class="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md border border-slate-200 flex-shrink-0">
+                        ${colorObj.name}
+                    </span>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        window.startGame = function() {
+            gameState.players = [];
+            for (let i = 0; i < gameState.playerCount; i++) {
+                const nameInput = document.getElementById(`player-name-${i}`);
+                const name = nameInput && nameInput.value.trim() ? nameInput.value.trim() : `Pemain ${i + 1}`;
+                gameState.players.push({
+                    id: i,
+                    name: name,
+                    position: 1,
+                    color: PLAYER_COLORS[i]
+                });
+            }
+            gameState.activePlayerIndex = 0;
+            gameState.isRolling = false;
+            gameState.isMoving = false;
+            gameState.historyLogs = [];
+            addHistoryLog("Permainan TANGKAS dimulai. Selamat berpetualang dengan integritas!");
+
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-game').classList.remove('hidden');
+            document.getElementById('header-game-controls').classList.remove('hidden');
+            document.getElementById('header-game-controls').classList.add('flex');
+
+            buildBoard();
+            updatePlayersStatusList();
+            updateTurnBanner();
+        };
+
+        window.confirmRestartGame = function() {
+            if (gameState.isRolling || gameState.isMoving) {
+                if (!confirm("Permainan sedang berlangsung. Apakah Anda tetap ingin mengulang?")) return;
+            } else {
+                if (!confirm("Apakah Anda yakin ingin mengulang permainan dari awal?")) return;
+            }
+            restartGameSamePlayers();
+        };
+
+        window.restartGameSamePlayers = function() {
+            // Close any open modals
+            document.getElementById('modal-victory').classList.add('hidden');
+            document.getElementById('modal-narrative').classList.add('hidden');
+            document.getElementById('modal-quiz').classList.add('hidden');
+            if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
+
+            gameState.players.forEach(p => p.position = 1);
+            gameState.activePlayerIndex = 0;
+            gameState.isRolling = false;
+            gameState.isMoving = false;
+            gameState.historyLogs = [];
+            addHistoryLog("Permainan diulang dari awal.");
+            buildBoard();
+            updatePlayersStatusList();
+            updateTurnBanner();
+        };
+
+        window.confirmBackToMenu = function() {
+            if (!confirm("Keluar ke halaman utama? Progres permainan saat ini akan diatur ulang.")) return;
+            document.getElementById('modal-victory').classList.add('hidden');
+            document.getElementById('modal-narrative').classList.add('hidden');
+            document.getElementById('modal-quiz').classList.add('hidden');
+            if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
+
+            document.getElementById('view-game').classList.add('hidden');
+            document.getElementById('header-game-controls').classList.remove('flex');
+            document.getElementById('header-game-controls').classList.add('hidden');
+            document.getElementById('view-home').classList.remove('hidden');
+        };
+
+        function buildBoard() {
+            const grid = document.getElementById('board-grid');
+            grid.innerHTML = '';
+
+            const tileColors = ['#ff6f61', '#ffc154', '#4cc9f0'];
+
+            // 10x10 Board. Tile 1 is bottom-left, Tile 100 is top-left.
+            for (let row = 9; row >= 0; row--) {
+                for (let col = 0; col < 10; col++) {
+                    let tileNum;
+                    if (row % 2 === 0) {
+                        tileNum = (row * 10) + col + 1;
+                    } else {
+                        tileNum = (row * 10) + (9 - col) + 1;
+                    }
+
+                    const tileDiv = document.createElement('div');
+                    tileDiv.id = `tile-${tileNum}`;
+                    tileDiv.className = "relative rounded-[4px] flex flex-col justify-between p-1 transition-all text-[8px] md:text-[10px] font-semibold shadow-inner border border-white/20";
+                    
+                    if (tileNum === 100) {
+                        tileDiv.className += " bg-gradient-to-tr from-amber-400 to-yellow-300 text-amber-950 border-amber-400 shadow-amber-300/50";
+                    } else if (LADDERS[tileNum]) {
+                        tileDiv.className += " bg-emerald-50 text-emerald-900 border-emerald-300";
+                    } else if (SNAKES[tileNum]) {
+                        tileDiv.className += " bg-rose-50 text-rose-900 border-rose-300";
+                    } else if (STAR_TILES.includes(tileNum)) {
+                        tileDiv.className += " bg-amber-50/90 text-amber-900 border-amber-300";
+                    } else {
+                        const colorIndex = (tileNum - 1) % tileColors.length;
+                        tileDiv.style.backgroundColor = tileColors[colorIndex];
+                        tileDiv.style.color = '#1e293b';
+                    }
+
+                    let badgeHtml = `<span class="font-display font-bold text-slate-900 leading-none">${tileNum}</span>`;
+                    if (tileNum === 100) {
+                        badgeHtml += `<i class="fa-solid fa-flag-checkered text-amber-700 text-[8px]"></i>`;
+                    } else if (LADDERS[tileNum]) {
+                        badgeHtml += `<span class="text-emerald-800 font-bold bg-white/80 px-1 rounded text-[7px]">↑${LADDERS[tileNum].target}</span>`;
+                    } else if (SNAKES[tileNum]) {
+                        badgeHtml += `<span class="text-rose-700 font-bold bg-white/80 px-1 rounded text-[7px]">↓${SNAKES[tileNum].target}</span>`;
+                    } else if (STAR_TILES.includes(tileNum)) {
+                        badgeHtml += `<span class="text-amber-600 bg-white/80 px-1 rounded text-[7px]">★</span>`;
+                    }
+
+                    tileDiv.innerHTML = `
+                        <div class="flex items-center justify-between w-full">${badgeHtml}</div>
+                        <div class="flex flex-wrap items-center justify-center gap-0.5 mt-auto min-h-[14px]" id="pawns-on-tile-${tileNum}"></div>
+                    `;
+
+                    grid.appendChild(tileDiv);
+                }
+            }
+
+            renderPawnsOnBoard();
+            setTimeout(drawConnectors, 50);
+        }
+
+        function drawConnectors() {
+            const svgLadders = document.getElementById('svg-ladders');
+            const svgSnakes = document.getElementById('svg-snakes');
+            svgLadders.innerHTML = '';
+            svgSnakes.innerHTML = '';
+
+            const boardWrapper = document.getElementById('board-wrapper');
+            const boardRect = boardWrapper.getBoundingClientRect();
+
+            function getTileSvgCenter(tileNum) {
+                const tileEl = document.getElementById(`tile-${tileNum}`);
+                if (!tileEl) return { x: 0, y: 0 };
+                const r = tileEl.getBoundingClientRect();
+                const x = ((r.left + r.width / 2) - (boardRect.left + 4)) / (boardRect.width - 8) * 1000;
+                const y = ((r.top + r.height / 2) - (boardRect.top + 4)) / (boardRect.height - 8) * 1000;
+                return { x, y };
+            }
+
+            for (let start in LADDERS) {
+                const end = LADDERS[start].target;
+                const p1 = getTileSvgCenter(parseInt(start));
+                const p2 = getTileSvgCenter(end);
+
+                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                const dx = p2.x - p1.x;
+                const dy = p2.y - p1.y;
+                const angle = Math.atan2(dy, dx);
+                const perpX = -Math.sin(angle) * 14;
+                const perpY = Math.cos(angle) * 14;
+
+                const rail1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                rail1.setAttribute('x1', p1.x + perpX);
+                rail1.setAttribute('y1', p1.y + perpY);
+                rail1.setAttribute('x2', p2.x + perpX);
+                rail1.setAttribute('y2', p2.y + perpY);
+                rail1.setAttribute('stroke', 'url(#woodGrad)');
+                rail1.setAttribute('stroke-width', '6');
+                rail1.setAttribute('stroke-linecap', 'round');
+                group.appendChild(rail1);
+
+                const rail2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                rail2.setAttribute('x1', p1.x - perpX);
+                rail2.setAttribute('y1', p1.y - perpY);
+                rail2.setAttribute('x2', p2.x - perpX);
+                rail2.setAttribute('y2', p2.y - perpY);
+                rail2.setAttribute('stroke', 'url(#woodGrad)');
+                rail2.setAttribute('stroke-width', '6');
+                rail2.setAttribute('stroke-linecap', 'round');
+                group.appendChild(rail2);
+
+                const numRungs = 5;
+                for (let i = 1; i < numRungs; i++) {
+                    const t = i / numRungs;
+                    const rx1 = (1 - t) * (p1.x + perpX) + t * (p2.x + perpX);
+                    const ry1 = (1 - t) * (p1.y + perpY) + t * (p2.y + perpY);
+                    const rx2 = (1 - t) * (p1.x - perpX) + t * (p2.x - perpX);
+                    const ry2 = (1 - t) * (p1.y - perpY) + t * (p2.y - perpY);
+
+                    const rung = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    rung.setAttribute('x1', rx1);
+                    rung.setAttribute('y1', ry1);
+                    rung.setAttribute('x2', rx2);
+                    rung.setAttribute('y2', ry2);
+                    rung.setAttribute('stroke', 'url(#woodRung)');
+                    rung.setAttribute('stroke-width', '5');
+                    rung.setAttribute('stroke-linecap', 'round');
+                    group.appendChild(rung);
+                }
+                svgLadders.appendChild(group);
+            }
+
+            let snakeIndex = 0;
+            for (let start in SNAKES) {
+                const end = SNAKES[start].target;
+                const p1 = getTileSvgCenter(parseInt(start));
+                const p2 = getTileSvgCenter(end);
+
+                const dx = p2.x - p1.x;
+                const dy = p2.y - p1.y;
+                const cx = (p1.x + p2.x) / 2 - dy * 0.35;
+                const cy = (p1.y + p2.y) / 2 + dx * 0.35;
+
+                const pathData = `M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}`;
+                const gradId = (snakeIndex % 2 === 0) ? 'url(#snakeGreenGrad)' : 'url(#snakeRedGrad)';
+
+                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                const body = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                body.setAttribute('d', pathData);
+                body.setAttribute('stroke', gradId);
+                body.setAttribute('stroke-width', '16');
+                body.setAttribute('fill', 'none');
+                body.setAttribute('stroke-linecap', 'round');
+                group.appendChild(body);
+
+                const rings = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                rings.setAttribute('d', pathData);
+                rings.setAttribute('stroke', '#ffffff');
+                rings.setAttribute('stroke-width', '16');
+                rings.setAttribute('fill', 'none');
+                rings.setAttribute('stroke-dasharray', '6,14');
+                rings.setAttribute('stroke-opacity', '0.4');
+                group.appendChild(rings);
+
+                const head = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                head.setAttribute('cx', p1.x);
+                head.setAttribute('cy', p1.y);
+                head.setAttribute('r', '11');
+                head.setAttribute('fill', (snakeIndex % 2 === 0) ? '#22c55e' : '#ef4444');
+                group.appendChild(head);
+
+                const tongue = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                tongue.setAttribute('d', `M ${p1.x} ${p1.y} L ${p1.x + 12} ${p1.y - 12} M ${p1.x + 12} ${p1.y - 12} L ${p1.x + 18} ${p1.y - 15} M ${p1.x + 12} ${p1.y - 12} L ${p1.x + 18} ${p1.y - 8}`);
+                tongue.setAttribute('stroke', '#f97316');
+                tongue.setAttribute('stroke-width', '2.5');
+                tongue.setAttribute('fill', 'none');
+                group.appendChild(tongue);
+
+                const eye1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                eye1.setAttribute('cx', p1.x - 4);
+                eye1.setAttribute('cy', p1.y - 3);
+                eye1.setAttribute('r', '3.5');
+                eye1.setAttribute('fill', '#ffffff');
+                group.appendChild(eye1);
+
+                const pupil1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                pupil1.setAttribute('cx', p1.x - 4);
+                pupil1.setAttribute('cy', p1.y - 3);
+                pupil1.setAttribute('r', '1.5');
+                pupil1.setAttribute('fill', '#000000');
+                group.appendChild(pupil1);
+
+                svgSnakes.appendChild(group);
+                snakeIndex++;
+            }
+        }
+
+        function renderPawnsOnBoard() {
+            for (let i = 1; i <= 100; i++) {
+                const container = document.getElementById(`pawns-on-tile-${i}`);
+                if (container) container.innerHTML = '';
+            }
+
+            const tileMap = {};
+            gameState.players.forEach(p => {
+                if (!tileMap[p.position]) tileMap[p.position] = [];
+                tileMap[p.position].push(p);
+            });
+
+            for (let tileNum in tileMap) {
+                const container = document.getElementById(`pawns-on-tile-${tileNum}`);
+                if (!container) continue;
+                const playersOnTile = tileMap[tileNum];
+
+                playersOnTile.forEach((p, index) => {
+                    const pawn = document.createElement('div');
+                    pawn.className = `pawn-token w-2.5 h-2.5 md:w-3.5 md:h-3.5 rounded-full ${p.color.class} border border-${p.color.border} shadow-sm flex items-center justify-center font-display font-bold text-[5px] md:text-[6px] transform hover:scale-125`;
+                    pawn.title = `${p.name} (Kotak ${p.position})`;
+                    pawn.innerText = `P${p.id + 1}`;
+                    container.appendChild(pawn);
+                });
+            }
+        }
+
+        function updatePlayersStatusList() {
+            const listEl = document.getElementById('players-status-list');
+            listEl.innerHTML = '';
+
+            gameState.players.forEach((p, idx) => {
+                const isCurrent = (idx === gameState.activePlayerIndex);
+                const item = document.createElement('div');
+                item.className = `p-2 rounded-xl flex items-center justify-between border transition-all ${
+                    isCurrent ? 'bg-indigo-50 border-indigo-300 shadow-sm' : 'bg-slate-50 border-slate-200'
+                }`;
+                item.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-lg ${p.color.class} flex items-center justify-center font-display font-bold text-[10px] shadow-sm">
+                            P${p.id + 1}
+                        </div>
+                        <div>
+                            <h4 class="font-display font-bold text-slate-800 text-xs ${isCurrent ? 'text-indigo-900' : ''}">${p.name} ${isCurrent ? '<span class="text-[10px] text-indigo-600 font-semibold">▶</span>' : ''}</h4>
+                            <p class="text-[10px] text-slate-500 font-medium">Kotak: <span class="font-bold text-slate-700">${p.position}</span>/100</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md ${isCurrent ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'}">
+                        ${isCurrent ? 'Giliran' : `Pos ${p.position}`}
+                    </span>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+
+        function addHistoryLog(message, colorClass = "text-slate-600") {
+            gameState.historyLogs.unshift({ message, colorClass, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) });
+            if (gameState.historyLogs.length > 50) gameState.historyLogs.pop();
+            renderHistoryLogs();
+        }
+
+        function renderHistoryLogs() {
+            const container = document.getElementById('game-history-list');
+            if (!container) return;
+            if (gameState.historyLogs.length === 0) {
+                container.innerHTML = `<div class="text-slate-400 text-center py-4 italic text-[11px]">Belum ada riwayat aktivitas.</div>`;
+                return;
+            }
+            container.innerHTML = '';
+            gameState.historyLogs.forEach(log => {
+                const div = document.createElement('div');
+                div.className = "bg-slate-50 hover:bg-slate-100 p-2 rounded-xl border border-slate-200/80 transition-all shadow-sm";
+                div.innerHTML = `
+                    <div class="flex items-center justify-between text-[9px] text-slate-400 mb-0.5">
+                        <span class="font-semibold text-indigo-600">${log.time}</span>
+                    </div>
+                    <p class="text-[11px] font-medium ${log.colorClass} leading-tight">${log.message}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function updateTurnBanner() {
+            const activePlayer = gameState.players[gameState.activePlayerIndex];
+            const avatar = document.getElementById('current-player-avatar');
+            const nameEl = document.getElementById('current-player-name-banner');
+            const statusMsg = document.getElementById('status-message');
+
+            avatar.className = `w-10 h-10 rounded-xl flex items-center justify-center text-white font-display text-lg font-bold shadow-sm ${activePlayer.color.class}`;
+            avatar.innerText = `P${activePlayer.id + 1}`;
+            nameEl.innerText = activePlayer.name;
+            statusMsg.innerText = `Giliran ${activePlayer.name}. Silakan lempar dadu!`;
+        }
+
+        window.rollDice = function() {
+            if (gameState.isRolling || gameState.isMoving) return;
+
+            gameState.isRolling = true;
+            const rollBtn = document.getElementById('roll-btn');
+            rollBtn.disabled = true;
+            rollBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            const diceEl = document.getElementById('dice');
+            diceEl.classList.add('rolling');
+            document.getElementById('dice-val-display').innerText = "Sedang mengocok...";
+
+            const finalRoll = Math.floor(Math.random() * 6) + 1;
+            const activePlayer = gameState.players[gameState.activePlayerIndex];
+            addHistoryLog(`${activePlayer.name} melempar dadu dan mendapatkan angka <b>${finalRoll}</b>.`, "text-indigo-900");
+
+            setTimeout(() => {
+                diceEl.classList.remove('rolling');
+                setDiceFaceVisual(finalRoll);
+                gameState.lastDiceValue = finalRoll;
+                document.getElementById('dice-val-display').innerText = `Angka ${finalRoll} Didapatkan!`;
+
+                gameState.isRolling = false;
+                rollBtn.disabled = false;
+                rollBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+                executePlayerMove(finalRoll);
+            }, 800);
+        };
+
+        function setDiceFaceVisual(val) {
+            const diceEl = document.getElementById('dice');
+            switch(val) {
+                case 1: diceEl.style.transform = `rotateX(0deg) rotateY(0deg) rotateZ(0deg)`; break;
+                case 2: diceEl.style.transform = `rotateX(90deg) rotateY(0deg) rotateZ(0deg)`; break;
+                case 3: diceEl.style.transform = `rotateX(0deg) rotateY(-90deg) rotateZ(0deg)`; break;
+                case 4: diceEl.style.transform = `rotateX(0deg) rotateY(90deg) rotateZ(0deg)`; break;
+                case 5: diceEl.style.transform = `rotateX(-90deg) rotateY(0deg) rotateZ(0deg)`; break;
+                case 6: diceEl.style.transform = `rotateX(180deg) rotateY(0deg) rotateZ(0deg)`; break;
+            }
+        }
+
+        async function executePlayerMove(diceVal) {
+            gameState.isMoving = true;
+            const player = gameState.players[gameState.activePlayerIndex];
+            const targetPos = player.position + diceVal;
+            const statusMsg = document.getElementById('status-message');
+
+            if (targetPos > 100) {
+                statusMsg.innerText = `${player.name} mendapat dadu ${diceVal}. Melebihi kotak 100! Pion tidak bergerak.`;
+                addHistoryLog(`${player.name} mendapat dadu ${diceVal} (Melebihi kotak 100, tidak bergerak).`, "text-amber-700");
+                await sleep(1000);
+                endTurn();
+                return;
+            }
+
+            statusMsg.innerText = `${player.name} bergerak ${diceVal} langkah...`;
+
+            for (let step = 1; step <= diceVal; step++) {
+                player.position += 1;
+                renderPawnsOnBoard();
+                updatePlayersStatusList();
+                await sleep(200);
+            }
+
+            addHistoryLog(`${player.name} bergerak ke kotak <b>${player.position}</b>.`, "text-slate-800");
+            await checkTileSpecialAction(player);
+        }
+
+        async function checkTileSpecialAction(player) {
+            const currentPos = player.position;
+            const statusMsg = document.getElementById('status-message');
+
+            if (currentPos === 100) {
+                addHistoryLog(`🎉 <b>${player.name}</b> berhasil mencapai kotak 100 dan memenangkan permainan!`, "text-emerald-700 font-bold");
+                triggerVictory(player);
+                return;
+            }
+
+            if (LADDERS[currentPos]) {
+                const ladder = LADDERS[currentPos];
+                statusMsg.innerText = `${player.name} menemukan Tangga! ("${ladder.title}")`;
+                addHistoryLog(`🪜 <b>${player.name}</b> menemukan Tangga di kotak ${currentPos} ("${ladder.title}") dan naik ke kotak ${ladder.target}!`, "text-emerald-800");
+                await sleep(500);
+                showNarrativeModal('ladder', ladder, async () => {
+                    statusMsg.innerText = `${player.name} menaiki tangga menuju kotak ${ladder.target}!`;
+                    player.position = ladder.target;
+                    renderPawnsOnBoard();
+                    updatePlayersStatusList();
+                    await sleep(800);
+                    endTurn();
+                });
+                return;
+            }
+
+            if (SNAKES[currentPos]) {
+                const snake = SNAKES[currentPos];
+                statusMsg.innerText = `${player.name} menemui Ular! ("${snake.title}")`;
+                addHistoryLog(`🐍 <b>${player.name}</b> menginjak kepala Ular di kotak ${currentPos} ("${snake.title}") dan turun ke kotak ${snake.target}!`, "text-rose-700");
+                await sleep(500);
+                showNarrativeModal('snake', snake, async () => {
+                    statusMsg.innerText = `${player.name} turun menuruni ular menuju kotak ${snake.target}!`;
+                    player.position = snake.target;
+                    renderPawnsOnBoard();
+                    updatePlayersStatusList();
+                    await sleep(800);
+                    endTurn();
+                });
+                return;
+            }
+
+            if (STAR_TILES.includes(currentPos)) {
+                statusMsg.innerText = `${player.name} berhenti di Kotak Bintang! Tantangan Integritas dimulai.`;
+                addHistoryLog(`⭐ <b>${player.name}</b> berhenti di Kotak Bintang (Kotak ${currentPos}) dan menghadapi Tantangan Integritas.`, "text-amber-700");
+                await sleep(500);
+                triggerQuizModal(player);
+                return;
+            }
+
+            await sleep(300);
+            endTurn();
+        }
+
+        function showNarrativeModal(type, data, callback) {
+            const modal = document.getElementById('modal-narrative');
+            const iconBadge = document.getElementById('narrative-badge-icon');
+            const iconI = document.getElementById('narrative-icon-i');
+            const catEl = document.getElementById('narrative-category');
+            const titleEl = document.getElementById('narrative-title');
+            const storyEl = document.getElementById('narrative-story');
+            const moralEl = document.getElementById('narrative-moral');
+
+            if (type === 'ladder') {
+                iconBadge.className = "w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-white text-2xl font-bold shadow-lg mb-4 bg-emerald-500";
+                iconI.className = "fa-solid fa-stairs";
+                catEl.className = "inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 bg-emerald-100 text-emerald-800 border border-emerald-200";
+            } else {
+                iconBadge.className = "w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-white text-2xl font-bold shadow-lg mb-4 bg-rose-500";
+                iconI.className = "fa-solid fa-triangle-exclamation";
+                catEl.className = "inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 bg-rose-100 text-rose-800 border border-rose-200";
+            }
+
+            catEl.innerText = data.category;
+            titleEl.innerText = data.title;
+            storyEl.innerText = data.story;
+            moralEl.innerText = `"${data.moral}"`;
+
+            gameState.pendingAction = callback;
+            modal.classList.remove('hidden');
+        }
+
+        window.closeNarrativeModal = function() {
+            const modal = document.getElementById('modal-narrative');
+            modal.classList.add('hidden');
+            if (gameState.pendingAction) {
+                const cb = gameState.pendingAction;
+                gameState.pendingAction = null;
+                cb();
+            }
+        };
+
+        function triggerQuizModal(player) {
+            // Pick a random question
+            const q = QUESTION_BANK[Math.floor(Math.random() * QUESTION_BANK.length)];
+            gameState.currentQuizQuestion = q;
+            gameState.quizSecondsLeft = 30;
+
+            const modal = document.getElementById('modal-quiz');
+            const catBadge = document.getElementById('quiz-category-badge');
+            const timerEl = document.getElementById('quiz-timer');
+            const questionEl = document.getElementById('quiz-question');
+            const optionsContainer = document.getElementById('quiz-options-container');
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            const submitBtn = document.getElementById('quiz-submit-btn');
+            const closeBtn = document.getElementById('quiz-close-btn');
+            const nextBtn = document.getElementById('quiz-next-btn');
+
+            catBadge.innerText = `Kategori: ${q.category}`;
+            timerEl.innerText = gameState.quizSecondsLeft;
+            questionEl.innerText = q.question;
+            
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const label = document.createElement('label');
+                label.className = "flex items-start gap-3 p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 cursor-pointer transition-all text-xs md:text-sm font-medium text-slate-700";
+                label.innerHTML = `
+                    <input type="radio" name="quiz-option" value="${idx}" class="mt-0.5 text-indigo-600 focus:ring-indigo-500">
+                    <span>${opt}</span>
+                `;
+                optionsContainer.appendChild(label);
+            });
+
+            feedbackBox.classList.add('hidden');
+            submitBtn.classList.remove('hidden');
+            closeBtn.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            modal.classList.remove('hidden');
+
+            if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
+            gameState.quizTimerInterval = setInterval(() => {
+                gameState.quizSecondsLeft--;
+                timerEl.innerText = gameState.quizSecondsLeft;
+                if (gameState.quizSecondsLeft <= 0) {
+                    clearInterval(gameState.quizTimerInterval);
+                    handleQuizTimeout();
+                }
+            }, 1000);
+        }
+
+        window.submitQuizAnswer = function() {
+            if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
+
+            const selected = document.querySelector('input[name="quiz-option"]:checked');
+            if (!selected) {
+                alert("Silakan pilih salah satu jawaban terlebih dahulu!");
+                // Restart timer if not answered
+                gameState.quizTimerInterval = setInterval(() => {
+                    gameState.quizSecondsLeft--;
+                    document.getElementById('quiz-timer').innerText = gameState.quizSecondsLeft;
+                    if (gameState.quizSecondsLeft <= 0) {
+                        clearInterval(gameState.quizTimerInterval);
+                        handleQuizTimeout();
+                    }
+                }, 1000);
+                return;
+            }
+
+            const q = gameState.currentQuizQuestion;
+            const submitBtn = document.getElementById('quiz-submit-btn');
+            const closeBtn = document.getElementById('quiz-close-btn');
+            const nextBtn = document.getElementById('quiz-next-btn');
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            const feedbackTitle = document.getElementById('quiz-feedback-title');
+            const feedbackText = document.getElementById('quiz-feedback-text');
+
+            document.querySelectorAll('input[name="quiz-option"]').forEach(input => input.disabled = true);
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            const player = gameState.players[gameState.activePlayerIndex];
+            let isCorrect = false;
+
+            const ansIdx = parseInt(selected.value);
+            if (ansIdx === q.correct) {
+                isCorrect = true;
+            }
+
+            feedbackBox.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackBox.className = "rounded-2xl p-3.5 mb-2 border bg-emerald-50 border-emerald-200 text-emerald-900";
+                feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> Jawaban Benar!`;
+                feedbackText.innerText = q.feedback + " (Pemain tetap berada di kotak bintang)";
+                addHistoryLog(`✅ <b>${player.name}</b> menjawab benar Tantangan Integritas (${q.category}) dan tetap di kotak ${player.position}.`, "text-emerald-700");
+            } else {
+                feedbackBox.className = "rounded-2xl p-3.5 mb-2 border bg-rose-50 border-rose-200 text-rose-900";
+                feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600"></i> Jawaban Kurang Tepat`;
+                const prevPos = Math.max(1, player.position - gameState.lastDiceValue);
+                feedbackText.innerText = q.feedback + ` Sesuai aturan, pemain dikembalikan ke posisi sebelum lemparan dadu (${prevPos}).`;
+                addHistoryLog(`❌ <b>${player.name}</b> menjawab salah Tantangan Integritas dan dikembalikan ke kotak ${prevPos}.`, "text-rose-700");
+                player.position = prevPos;
+            }
+
+            renderPawnsOnBoard();
+            updatePlayersStatusList();
+
+            submitBtn.classList.add('hidden');
+            closeBtn.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+        };
+
+        function handleQuizTimeout() {
+            const submitBtn = document.getElementById('quiz-submit-btn');
+            const closeBtn = document.getElementById('quiz-close-btn');
+            const nextBtn = document.getElementById('quiz-next-btn');
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            const feedbackTitle = document.getElementById('quiz-feedback-title');
+            const feedbackText = document.getElementById('quiz-feedback-text');
+            const q = gameState.currentQuizQuestion;
+            const player = gameState.players[gameState.activePlayerIndex];
+
+            document.querySelectorAll('input[name="quiz-option"]').forEach(input => input.disabled = true);
+            submitBtn.disabled = true;
+
+            const prevPos = Math.max(1, player.position - gameState.lastDiceValue);
+            player.position = prevPos;
+            addHistoryLog(`⏳ Waktu tantangan habis untuk <b>${player.name}</b>. Dikembalikan ke kotak ${prevPos}.`, "text-rose-700");
+
+            feedbackBox.classList.remove('hidden');
+            feedbackBox.className = "rounded-2xl p-3.5 mb-2 border bg-rose-50 border-rose-200 text-rose-900";
+            feedbackTitle.innerHTML = `<i class="fa-solid fa-clock text-rose-600"></i> Waktu Habis!`;
+            feedbackText.innerText = q.feedback + ` Waktu 30 detik habis. Pemain dikembalikan ke posisi sebelumnya (${prevPos}).`;
+
+            renderPawnsOnBoard();
+            updatePlayersStatusList();
+
+            submitBtn.classList.add('hidden');
+            closeBtn.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+        }
+
+        window.closeQuizModal = function() {
+            const modal = document.getElementById('modal-quiz');
+            modal.classList.add('hidden');
+            
+            const submitBtn = document.getElementById('quiz-submit-btn');
+            const closeBtn = document.getElementById('quiz-close-btn');
+            const nextBtn = document.getElementById('quiz-next-btn');
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            
+            submitBtn.classList.remove('hidden');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            closeBtn.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            feedbackBox.classList.add('hidden');
+            
+            document.querySelectorAll('input[name="quiz-option"]').forEach(input => {
+                input.checked = false;
+                input.disabled = false;
+            });
+
+            endTurn();
+        };
+
+        function triggerVictory(player) {
+            const modal = document.getElementById('modal-victory');
+            const winnerName = document.getElementById('winner-name-display');
+            winnerName.innerText = `${player.name} Memenangkan Permainan!`;
+            modal.classList.remove('hidden');
+
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function endTurn() {
+            gameState.isMoving = false;
+            gameState.activePlayerIndex = (gameState.activePlayerIndex + 1) % gameState.players.length;
+            updateTurnBanner();
+            updatePlayersStatusList();
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>
